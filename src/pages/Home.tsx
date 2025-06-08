@@ -115,8 +115,8 @@ const Home = () => {
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder={
                         searchRole === 'client' 
-                          ? 'Search for freelancers (e.g., "React developer", "UI designer")' 
-                          : 'Search for projects (e.g., "web development", "logo design")'
+                          ? 'Search for freelancers' 
+                          : 'Search for projects'
                       }
                       className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
                     />
