@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Users, Briefcase, Shield, CheckCircle, Star, TrendingUp, FileText, CreditCard, Settings } from 'lucide-react';
 
 const UserRoles = () => {
@@ -272,14 +273,20 @@ const UserRoles = () => {
             tailored specifically for your needs.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-semibold flex items-center justify-center space-x-2 transition-colors">
+            <Link
+              to="/auth"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-semibold flex items-center justify-center space-x-2 transition-colors"
+            >
               <Users className="h-5 w-5" />
               <span>Join as Freelancer</span>
-            </button>
-            <button className="bg-teal-600 hover:bg-teal-700 text-white px-8 py-4 rounded-lg font-semibold flex items-center justify-center space-x-2 transition-colors">
+            </Link>
+            <Link
+              to="/auth"
+              className="bg-teal-600 hover:bg-teal-700 text-white px-8 py-4 rounded-lg font-semibold flex items-center justify-center space-x-2 transition-colors"
+            >
               <Briefcase className="h-5 w-5" />
               <span>Join as Client</span>
-            </button>
+            </Link>
           </div>
         </div>
       </div>

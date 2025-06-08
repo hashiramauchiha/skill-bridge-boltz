@@ -1,5 +1,6 @@
 import React from 'react';
-import { UserPlus, Search, FileText, CheckCircle, CreditCard, Star, ArrowRight, Users, Briefcase } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { UserPlus, Search, FileText, CheckCircle, CreditCard, Star, ArrowRight, Users, Briefcase, ArrowDown } from 'lucide-react';
 
 const HowItWorks = () => {
   const freelancerSteps = [
@@ -94,25 +95,90 @@ const HowItWorks = () => {
           </p>
         </div>
 
-        {/* Process Overview */}
+        {/* Dynamic Process Overview */}
         <div className="bg-gradient-to-r from-blue-50 to-teal-50 rounded-2xl p-8 md:p-12 mb-20">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">The Complete Journey</h2>
             <p className="text-lg text-gray-600">From connection to completion, every step is designed for success</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-            {['Sign Up', 'Connect', 'Contract', 'Work', 'Pay', 'Endorse'].map((step, index) => (
-              <div key={index} className="text-center">
-                <div className="bg-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3 shadow-md">
-                  <span className="text-xl font-bold text-blue-600">{index + 1}</span>
+          {/* Dynamic Flowchart */}
+          <div className="relative">
+            {/* Connection Lines */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-full h-0.5 bg-gradient-to-r from-blue-300 via-teal-300 to-blue-300"></div>
+            </div>
+            
+            {/* Vertical connectors for mobile */}
+            <div className="md:hidden absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-300 via-teal-300 to-blue-300"></div>
+            
+            <div className="relative grid grid-cols-1 md:grid-cols-6 gap-8 md:gap-4">
+              {[
+                { step: 'Sign Up', icon: <UserPlus className="h-6 w-6" />, color: 'from-blue-500 to-blue-600' },
+                { step: 'Connect', icon: <Search className="h-6 w-6" />, color: 'from-teal-500 to-teal-600' },
+                { step: 'Contract', icon: <FileText className="h-6 w-6" />, color: 'from-purple-500 to-purple-600' },
+                { step: 'Work', icon: <CheckCircle className="h-6 w-6" />, color: 'from-green-500 to-green-600' },
+                { step: 'Pay', icon: <CreditCard className="h-6 w-6" />, color: 'from-orange-500 to-orange-600' },
+                { step: 'Endorse', icon: <Star className="h-6 w-6" />, color: 'from-yellow-500 to-yellow-600' }
+              ].map((item, index) => (
+                <div key={index} className="text-center relative">
+                  {/* Step Circle */}
+                  <div className={`relative mx-auto w-20 h-20 bg-gradient-to-r ${item.color} rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform duration-300 mb-4`}>
+                    <div className="text-white">
+                      {item.icon}
+                    </div>
+                    {/* Step Number */}
+                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md">
+                      <span className="text-sm font-bold text-gray-700">{index + 1}</span>
+                    </div>
+                  </div>
+                  
+                  {/* Step Label */}
+                  <div className="text-sm font-semibold text-gray-700 mb-2">{item.step}</div>
+                  
+                  {/* Arrow for desktop */}
+                  {index < 5 && (
+                    <div className="hidden md:block absolute top-10 -right-6 text-gray-400">
+                      <ArrowRight className="h-5 w-5" />
+                    </div>
+                  )}
+                  
+                  {/* Arrow for mobile */}
+                  {index < 5 && (
+                    <div className="md:hidden absolute -bottom-4 left-1/2 transform -translate-x-1/2 text-gray-400">
+                      <ArrowDown className="h-5 w-5" />
+                    </div>
+                  )}
                 </div>
-                <div className="text-sm font-medium text-gray-700">{step}</div>
-                {index < 5 && (
-                  <ArrowRight className="h-4 w-4 text-gray-400 mx-auto mt-2 hidden md:block" />
-                )}
+              ))}
+            </div>
+          </div>
+          
+          {/* Interactive Elements */}
+          <div className="mt-12 text-center">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
+                <div className="text-blue-600 mb-2">
+                  <CheckCircle className="h-8 w-8 mx-auto" />
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-2">Secure Process</h3>
+                <p className="text-sm text-gray-600">Every step is protected by our security protocols</p>
               </div>
-            ))}
+              <div className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
+                <div className="text-teal-600 mb-2">
+                  <Star className="h-8 w-8 mx-auto" />
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-2">Quality Assured</h3>
+                <p className="text-sm text-gray-600">Milestone-based delivery ensures quality outcomes</p>
+              </div>
+              <div className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
+                <div className="text-purple-600 mb-2">
+                  <CreditCard className="h-8 w-8 mx-auto" />
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-2">Payment Protected</h3>
+                <p className="text-sm text-gray-600">Escrow system protects all financial transactions</p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -257,12 +323,18 @@ const HowItWorks = () => {
             Join thousands of freelancers and clients who trust SkillBridge for their projects
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-semibold transition-colors">
+            <Link
+              to="/auth"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-semibold transition-colors"
+            >
               Start as Freelancer
-            </button>
-            <button className="bg-teal-600 hover:bg-teal-700 text-white px-8 py-4 rounded-lg font-semibold transition-colors">
+            </Link>
+            <Link
+              to="/auth"
+              className="bg-teal-600 hover:bg-teal-700 text-white px-8 py-4 rounded-lg font-semibold transition-colors"
+            >
               Post a Project
-            </button>
+            </Link>
           </div>
         </div>
       </div>

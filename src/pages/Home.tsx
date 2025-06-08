@@ -1,8 +1,19 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowRight, Shield, Users, FileCheck, Star, TrendingUp, Award } from 'lucide-react';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowRight, Shield, Users, FileCheck, Star, TrendingUp, Award, Search, MapPin, Clock, DollarSign } from 'lucide-react';
 
 const Home = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchRole, setSearchRole] = useState('client');
+  const navigate = useNavigate();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}&role=${searchRole}`);
+    }
+  };
+
   const features = [
     {
       icon: <Award className="h-8 w-8 text-blue-600" />,
@@ -65,19 +76,80 @@ const Home = () => {
                 The secure freelance marketplace with peer-reviewed skill endorsements, 
                 milestone-based escrow payments, and professional contract templates.
               </p>
+
+              {/* Search Bar */}
+              <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
+                <form onSubmit={handleSearch} className="space-y-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex bg-gray-100 rounded-lg p-1">
+                      <button
+                        type="button"
+                        onClick={() => setSearchRole('client')}
+                        className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                          searchRole === 'client' 
+                            ? 'bg-white text-blue-600 shadow-sm' 
+                            : 'text-gray-600 hover:text-gray-900'
+                        }`}
+                      >
+                        Hire Talent
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSearchRole('freelancer')}
+                        className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                          searchRole === 'freelancer' 
+                            ? 'bg-white text-teal-600 shadow-sm' 
+                            : 'text-gray-600 hover:text-gray-900'
+                        }`}
+                      >
+                        Find Work
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="relative">
+                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder={
+                        searchRole === 'client' 
+                          ? 'Search for freelancers (e.g., "React developer", "UI designer")' 
+                          : 'Search for projects (e.g., "web development", "logo design")'
+                      }
+                      className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
+                    />
+                    <button
+                      type="submit"
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                    >
+                      Search
+                    </button>
+                  </div>
+                  
+                  <p className="text-sm text-gray-500 text-center">
+                    {searchRole === 'client' 
+                      ? 'Find verified freelancers with proven track records' 
+                      : 'Discover projects that match your skills and expertise'
+                    }
+                  </p>
+                </form>
+              </div>
+
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
                   to="/auth"
                   className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-semibold flex items-center justify-center space-x-2 transition-all transform hover:scale-105 shadow-lg"
                 >
-                  <span>Find Freelancers</span>
+                  <span>Get Started</span>
                   <ArrowRight className="h-5 w-5" />
                 </Link>
                 <Link
-                  to="/auth"
+                  to="/how-it-works"
                   className="bg-white hover:bg-gray-50 text-blue-600 border-2 border-blue-600 px-8 py-4 rounded-lg font-semibold flex items-center justify-center space-x-2 transition-all transform hover:scale-105"
                 >
-                  <span>Join as Freelancer</span>
+                  <span>Learn More</span>
                 </Link>
               </div>
             </div>
