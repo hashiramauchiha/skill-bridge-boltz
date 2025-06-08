@@ -205,7 +205,8 @@ const Dashboard = () => {
     }
   ];
 
-  const recentMessages = [
+  // Freelancer messages (from clients)
+  const freelancerMessages = [
     {
       id: 1,
       sender: 'Sarah Johnson',
@@ -232,6 +233,34 @@ const Dashboard = () => {
     }
   ];
 
+  // Client messages (from freelancers)
+  const clientMessages = [
+    {
+      id: 1,
+      sender: 'Alex Thompson',
+      message: 'I\'ve completed the homepage design. Ready for your review!',
+      time: '1 hour ago',
+      unread: true,
+      project: 'E-commerce Website'
+    },
+    {
+      id: 2,
+      sender: 'Sarah Chen',
+      message: 'The wireframes are ready. Could we schedule a review call?',
+      time: '3 hours ago',
+      unread: true,
+      project: 'Mobile App UI/UX'
+    },
+    {
+      id: 3,
+      sender: 'Mike Rodriguez',
+      message: 'Final logo files have been uploaded to the project folder.',
+      time: '6 hours ago',
+      unread: false,
+      project: 'Brand Identity'
+    }
+  ];
+
   const tabs = [
     { id: 'overview', label: 'Overview', icon: <BarChart3 className="h-4 w-4" /> },
     { id: 'projects', label: 'Projects', icon: <Briefcase className="h-4 w-4" /> },
@@ -241,6 +270,7 @@ const Dashboard = () => {
   ];
 
   const currentStats = userRole === 'freelancer' ? freelancerStats : clientStats;
+  const recentMessages = userRole === 'freelancer' ? freelancerMessages : clientMessages;
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
@@ -783,10 +813,12 @@ const Dashboard = () => {
         {activeTab === 'endorsements' && (
           <div className="bg-white rounded-lg shadow-sm border">
             <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Skill Endorsements</h2>
+              <h2 className="text-lg font-semibold text-gray-900">
+                {userRole === 'freelancer' ? 'Skill Endorsements' : 'Give Endorsements'}
+              </h2>
               <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
                 <Plus className="h-4 w-4" />
-                <span>Request Endorsement</span>
+                <span>{userRole === 'freelancer' ? 'Request Endorsement' : 'Give Endorsement'}</span>
               </button>
             </div>
             <div className="p-6">
@@ -844,22 +876,27 @@ const Dashboard = () => {
                         View All
                       </button>
                       <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-200 transition-colors">
-                        Share Skill
+                        {userRole === 'freelancer' ? 'Share Skill' : 'Endorse Skill'}
                       </button>
                     </div>
                   </div>
                 ))}
               </div>
               
-              {/* Endorsement Request Section */}
+              {/* Endorsement Request/Give Section */}
               <div className="mt-8 bg-gradient-to-r from-blue-50 to-teal-50 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Request New Endorsements</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  {userRole === 'freelancer' ? 'Request New Endorsements' : 'Give Endorsements to Freelancers'}
+                </h3>
                 <p className="text-gray-600 mb-4">
-                  Ask your recent clients to endorse your skills and build your credibility on the platform.
+                  {userRole === 'freelancer' 
+                    ? 'Ask your recent clients to endorse your skills and build your credibility on the platform.'
+                    : 'Endorse the skills of freelancers you\'ve worked with to help them build their reputation.'
+                  }
                 </p>
                 <div className="flex items-center space-x-4">
                   <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                    Send Endorsement Request
+                    {userRole === 'freelancer' ? 'Send Endorsement Request' : 'Give Endorsement'}
                   </button>
                   <button className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                     Learn More
