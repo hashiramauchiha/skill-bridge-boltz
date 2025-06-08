@@ -32,6 +32,7 @@ import {
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [userRole, setUserRole] = useState('freelancer'); // 'freelancer' or 'client'
+  const [paymentFilter, setPaymentFilter] = useState('all'); // Add payment filter state
 
   // Freelancer Data
   const freelancerStats = [
@@ -127,7 +128,7 @@ const Dashboard = () => {
     }
   ];
 
-  const payments = [
+  const allPayments = [
     {
       id: 1,
       project: 'E-commerce Website Design',
@@ -167,8 +168,34 @@ const Dashboard = () => {
       date: '2025-01-22',
       milestone: 'Product Pages',
       method: 'Escrow Hold'
+    },
+    {
+      id: 5,
+      project: 'Content Writing Project',
+      amount: '$200',
+      type: 'Final Payment',
+      status: 'Completed',
+      date: '2025-01-15',
+      milestone: 'Article Delivery',
+      method: 'Escrow Release'
+    },
+    {
+      id: 6,
+      project: 'Logo Design',
+      amount: '$150',
+      type: 'Initial Payment',
+      status: 'Pending',
+      date: '2025-01-23',
+      milestone: 'Project Start',
+      method: 'Escrow Hold'
     }
   ];
+
+  // Filter payments based on selected filter
+  const filteredPayments = allPayments.filter(payment => {
+    if (paymentFilter === 'all') return true;
+    return payment.status.toLowerCase() === paymentFilter.toLowerCase();
+  });
 
   const endorsements = [
     { 
@@ -291,6 +318,10 @@ const Dashboard = () => {
       case 'low': return 'text-green-600';
       default: return 'text-gray-600';
     }
+  };
+
+  const handlePaymentFilterChange = (e) => {
+    setPaymentFilter(e.target.value);
   };
 
   return (
@@ -721,11 +752,15 @@ const Dashboard = () => {
             <div className="p-6 border-b border-gray-200 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900">Payment History</h2>
               <div className="flex items-center space-x-3">
-                <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                  <option>All Payments</option>
-                  <option>Completed</option>
-                  <option>Pending</option>
-                  <option>In Review</option>
+                <select 
+                  value={paymentFilter}
+                  onChange={handlePaymentFilterChange}
+                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="all">All Payments</option>
+                  <option value="completed">Completed</option>
+                  <option value="pending">Pending</option>
+                  <option value="in review">In Review</option>
                 </select>
                 <button className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
                   <Download className="h-4 w-4" />
@@ -735,75 +770,81 @@ const Dashboard = () => {
             </div>
             <div className="p-6">
               <div className="space-y-4">
-                {payments.map((payment) => (
-                  <div key={payment.id} className="border rounded-lg p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h3 className="text-lg font-medium text-gray-900 mb-1">{payment.project}</h3>
-                        <p className="text-gray-600 mb-1">{payment.milestone}</p>
-                        <p className="text-sm text-gray-500">{payment.type}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-2xl font-bold text-gray-900 mb-1">{payment.amount}</p>
-                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(payment.status)}`}>
-                          {payment.status}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                      <div>
-                        <p className="text-sm text-gray-500">Payment Date</p>
-                        <p className="font-medium">{payment.date}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Payment Method</p>
-                        <p className="font-medium">{payment.method}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Transaction ID</p>
-                        <p className="font-medium text-blue-600">#TXN{payment.id}2025</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        {payment.status === 'Completed' && (
-                          <div className="flex items-center space-x-1">
-                            <CheckCircle className="h-4 w-4 text-green-500" />
-                            <span className="text-sm text-gray-600">Payment Released</span>
-                          </div>
-                        )}
-                        {payment.status === 'Pending' && (
-                          <div className="flex items-center space-x-1">
-                            <Clock className="h-4 w-4 text-yellow-500" />
-                            <span className="text-sm text-gray-600">Awaiting Approval</span>
-                          </div>
-                        )}
-                        {payment.status === 'In Review' && (
-                          <div className="flex items-center space-x-1">
-                            <AlertCircle className="h-4 w-4 text-blue-500" />
-                            <span className="text-sm text-gray-600">Under Review</span>
-                          </div>
-                        )}
-                        <div className="flex items-center space-x-1">
-                          <Shield className="h-4 w-4 text-green-500" />
-                          <span className="text-sm text-gray-600">Escrow Protected</span>
+                {filteredPayments.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">No payments found for the selected filter.</p>
+                  </div>
+                ) : (
+                  filteredPayments.map((payment) => (
+                    <div key={payment.id} className="border rounded-lg p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div>
+                          <h3 className="text-lg font-medium text-gray-900 mb-1">{payment.project}</h3>
+                          <p className="text-gray-600 mb-1">{payment.milestone}</p>
+                          <p className="text-sm text-gray-500">{payment.type}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-2xl font-bold text-gray-900 mb-1">{payment.amount}</p>
+                          <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(payment.status)}`}>
+                            {payment.status}
+                          </span>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <button className="px-3 py-1 bg-blue-100 text-blue-700 rounded-md text-sm font-medium hover:bg-blue-200 transition-colors">
-                          View Details
-                        </button>
-                        {payment.status === 'Completed' && (
-                          <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-200 transition-colors">
-                            Download Receipt
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div>
+                          <p className="text-sm text-gray-500">Payment Date</p>
+                          <p className="font-medium">{payment.date}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500">Payment Method</p>
+                          <p className="font-medium">{payment.method}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500">Transaction ID</p>
+                          <p className="font-medium text-blue-600">#TXN{payment.id}2025</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          {payment.status === 'Completed' && (
+                            <div className="flex items-center space-x-1">
+                              <CheckCircle className="h-4 w-4 text-green-500" />
+                              <span className="text-sm text-gray-600">Payment Released</span>
+                            </div>
+                          )}
+                          {payment.status === 'Pending' && (
+                            <div className="flex items-center space-x-1">
+                              <Clock className="h-4 w-4 text-yellow-500" />
+                              <span className="text-sm text-gray-600">Awaiting Approval</span>
+                            </div>
+                          )}
+                          {payment.status === 'In Review' && (
+                            <div className="flex items-center space-x-1">
+                              <AlertCircle className="h-4 w-4 text-blue-500" />
+                              <span className="text-sm text-gray-600">Under Review</span>
+                            </div>
+                          )}
+                          <div className="flex items-center space-x-1">
+                            <Shield className="h-4 w-4 text-green-500" />
+                            <span className="text-sm text-gray-600">Escrow Protected</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <button className="px-3 py-1 bg-blue-100 text-blue-700 rounded-md text-sm font-medium hover:bg-blue-200 transition-colors">
+                            View Details
                           </button>
-                        )}
+                          {payment.status === 'Completed' && (
+                            <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-200 transition-colors">
+                              Download Receipt
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
           </div>
