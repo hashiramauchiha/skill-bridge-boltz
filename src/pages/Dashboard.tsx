@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   BarChart3, 
   Calendar, 
@@ -28,173 +28,68 @@ import {
   AlertCircle,
   CheckCircle2
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
-  const [userRole, setUserRole] = useState('freelancer'); // 'freelancer' or 'client'
-  const [paymentFilter, setPaymentFilter] = useState('all'); // Add payment filter state
+  const [paymentFilter, setPaymentFilter] = useState('all');
+  const [payments, setPayments] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch user's projects
+        const projectsResponse = await axios.get('/projects/my-projects');
+        setProjects(projectsResponse.data);
+
+        // Fetch user's payments
+        const paymentsResponse = await axios.get('/payments');
+        setPayments(paymentsResponse.data);
+
+        // Fetch recent messages
+        const messagesResponse = await axios.get('/messages/recent');
+        setMessages(messagesResponse.data);
+
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user) {
+      fetchDashboardData();
+    }
+  }, [user]);
 
   // Freelancer Data
   const freelancerStats = [
-    { title: 'Active Projects', value: '8', icon: <Briefcase className="h-6 w-6" />, color: 'text-blue-600', change: '+2' },
-    { title: 'Completed Projects', value: '24', icon: <CheckCircle className="h-6 w-6" />, color: 'text-green-600', change: '+3' },
-    { title: 'Total Earnings', value: '$12,450', icon: <DollarSign className="h-6 w-6" />, color: 'text-purple-600', change: '+$1,200' },
-    { title: 'Client Rating', value: '4.9', icon: <Star className="h-6 w-6" />, color: 'text-yellow-600', change: '+0.1' }
+    { title: 'Active Projects', value: projects.filter(p => p.status === 'in_progress').length.toString(), icon: <Briefcase className="h-6 w-6" />, color: 'text-blue-600', change: '+2' },
+    { title: 'Completed Projects', value: projects.filter(p => p.status === 'completed').length.toString(), icon: <CheckCircle className="h-6 w-6" />, color: 'text-green-600', change: '+3' },
+    { title: 'Total Earnings', value: `$${user?.totalEarnings || 0}`, icon: <DollarSign className="h-6 w-6" />, color: 'text-purple-600', change: '+$1,200' },
+    { title: 'Client Rating', value: user?.rating?.toFixed(1) || '0.0', icon: <Star className="h-6 w-6" />, color: 'text-yellow-600', change: '+0.1' }
   ];
 
   // Client Data
   const clientStats = [
-    { title: 'Active Projects', value: '5', icon: <Briefcase className="h-6 w-6" />, color: 'text-blue-600', change: '+1' },
-    { title: 'Total Freelancers', value: '18', icon: <Users className="h-6 w-6" />, color: 'text-green-600', change: '+4' },
-    { title: 'Total Spent', value: '$8,750', icon: <DollarSign className="h-6 w-6" />, color: 'text-purple-600', change: '+$2,100' },
-    { title: 'Avg Project Rating', value: '4.8', icon: <Star className="h-6 w-6" />, color: 'text-yellow-600', change: '+0.2' }
-  ];
-
-  const activeProjects = [
-    {
-      id: 1,
-      title: 'E-commerce Website Design',
-      client: 'TechCorp Solutions',
-      freelancer: 'Alex Thompson',
-      progress: 75,
-      deadline: '2025-02-15',
-      budget: '$2,500',
-      status: 'In Progress',
-      nextMilestone: 'Homepage Design Review',
-      priority: 'High'
-    },
-    {
-      id: 2,
-      title: 'Mobile App UI/UX',
-      client: 'StartupXYZ',
-      freelancer: 'Sarah Chen',
-      progress: 40,
-      deadline: '2025-03-01',
-      budget: '$1,800',
-      status: 'In Progress',
-      nextMilestone: 'Wireframe Approval',
-      priority: 'Medium'
-    },
-    {
-      id: 3,
-      title: 'Brand Identity Package',
-      client: 'Creative Agency',
-      freelancer: 'Mike Rodriguez',
-      progress: 90,
-      deadline: '2025-01-30',
-      budget: '$1,200',
-      status: 'Almost Complete',
-      nextMilestone: 'Final Logo Delivery',
-      priority: 'High'
-    }
-  ];
-
-  const contracts = [
-    {
-      id: 1,
-      title: 'Web Development Contract',
-      project: 'E-commerce Website Design',
-      client: 'TechCorp Solutions',
-      freelancer: 'Alex Thompson',
-      value: '$2,500',
-      status: 'Active',
-      signedDate: '2025-01-10',
-      milestones: 4,
-      completedMilestones: 3
-    },
-    {
-      id: 2,
-      title: 'UI/UX Design Agreement',
-      project: 'Mobile App UI/UX',
-      client: 'StartupXYZ',
-      freelancer: 'Sarah Chen',
-      value: '$1,800',
-      status: 'Active',
-      signedDate: '2025-01-05',
-      milestones: 5,
-      completedMilestones: 2
-    },
-    {
-      id: 3,
-      title: 'Brand Design Contract',
-      project: 'Brand Identity Package',
-      client: 'Creative Agency',
-      freelancer: 'Mike Rodriguez',
-      value: '$1,200',
-      status: 'Pending Completion',
-      signedDate: '2024-12-20',
-      milestones: 3,
-      completedMilestones: 3
-    }
-  ];
-
-  const allPayments = [
-    {
-      id: 1,
-      project: 'E-commerce Website Design',
-      amount: '$625',
-      type: 'Milestone Payment',
-      status: 'Completed',
-      date: '2025-01-20',
-      milestone: 'Homepage Design',
-      method: 'Escrow Release'
-    },
-    {
-      id: 2,
-      project: 'Mobile App UI/UX',
-      amount: '$360',
-      type: 'Milestone Payment',
-      status: 'Pending',
-      date: '2025-01-25',
-      milestone: 'Wireframe Completion',
-      method: 'Escrow Hold'
-    },
-    {
-      id: 3,
-      project: 'Brand Identity Package',
-      amount: '$400',
-      type: 'Milestone Payment',
-      status: 'Completed',
-      date: '2025-01-18',
-      milestone: 'Logo Concepts',
-      method: 'Escrow Release'
-    },
-    {
-      id: 4,
-      project: 'E-commerce Website Design',
-      amount: '$625',
-      type: 'Milestone Payment',
-      status: 'In Review',
-      date: '2025-01-22',
-      milestone: 'Product Pages',
-      method: 'Escrow Hold'
-    },
-    {
-      id: 5,
-      project: 'Content Writing Project',
-      amount: '$200',
-      type: 'Final Payment',
-      status: 'Completed',
-      date: '2025-01-15',
-      milestone: 'Article Delivery',
-      method: 'Escrow Release'
-    },
-    {
-      id: 6,
-      project: 'Logo Design',
-      amount: '$150',
-      type: 'Initial Payment',
-      status: 'Pending',
-      date: '2025-01-23',
-      milestone: 'Project Start',
-      method: 'Escrow Hold'
-    }
+    { title: 'Active Projects', value: projects.filter(p => p.status === 'in_progress').length.toString(), icon: <Briefcase className="h-6 w-6" />, color: 'text-blue-600', change: '+1' },
+    { title: 'Total Projects', value: projects.length.toString(), icon: <Users className="h-6 w-6" />, color: 'text-green-600', change: '+4' },
+    { title: 'Total Spent', value: `$${payments.reduce((sum, p) => sum + (p.amount || 0), 0)}`, icon: <DollarSign className="h-6 w-6" />, color: 'text-purple-600', change: '+$2,100' },
+    { title: 'Avg Project Rating', value: user?.rating?.toFixed(1) || '0.0', icon: <Star className="h-6 w-6" />, color: 'text-yellow-600', change: '+0.2' }
   ];
 
   // Filter payments based on selected filter
-  const filteredPayments = allPayments.filter(payment => {
+  const filteredPayments = payments.filter(payment => {
     if (paymentFilter === 'all') return true;
-    return payment.status.toLowerCase() === paymentFilter.toLowerCase();
+    return payment.status?.toLowerCase() === paymentFilter.toLowerCase();
   });
 
   const endorsements = [
@@ -232,62 +127,6 @@ const Dashboard = () => {
     }
   ];
 
-  // Freelancer messages (from clients)
-  const freelancerMessages = [
-    {
-      id: 1,
-      sender: 'Sarah Johnson',
-      message: 'Great work on the homepage! Could you adjust the color scheme?',
-      time: '2 hours ago',
-      unread: true,
-      project: 'E-commerce Website'
-    },
-    {
-      id: 2,
-      sender: 'Mike Chen',
-      message: 'The wireframes look perfect. When can we expect the next milestone?',
-      time: '5 hours ago',
-      unread: true,
-      project: 'Mobile App UI/UX'
-    },
-    {
-      id: 3,
-      sender: 'Lisa Rodriguez',
-      message: 'Thank you for the quick turnaround on the logo concepts.',
-      time: '1 day ago',
-      unread: false,
-      project: 'Brand Identity'
-    }
-  ];
-
-  // Client messages (from freelancers)
-  const clientMessages = [
-    {
-      id: 1,
-      sender: 'Alex Thompson',
-      message: 'I\'ve completed the homepage design. Ready for your review!',
-      time: '1 hour ago',
-      unread: true,
-      project: 'E-commerce Website'
-    },
-    {
-      id: 2,
-      sender: 'Sarah Chen',
-      message: 'The wireframes are ready. Could we schedule a review call?',
-      time: '3 hours ago',
-      unread: true,
-      project: 'Mobile App UI/UX'
-    },
-    {
-      id: 3,
-      sender: 'Mike Rodriguez',
-      message: 'Final logo files have been uploaded to the project folder.',
-      time: '6 hours ago',
-      unread: false,
-      project: 'Brand Identity'
-    }
-  ];
-
   const tabs = [
     { id: 'overview', label: 'Overview', icon: <BarChart3 className="h-4 w-4" /> },
     { id: 'projects', label: 'Projects', icon: <Briefcase className="h-4 w-4" /> },
@@ -296,17 +135,16 @@ const Dashboard = () => {
     { id: 'endorsements', label: 'Endorsements', icon: <Award className="h-4 w-4" /> }
   ];
 
-  const currentStats = userRole === 'freelancer' ? freelancerStats : clientStats;
-  const recentMessages = userRole === 'freelancer' ? freelancerMessages : clientMessages;
+  const currentStats = user?.role === 'freelancer' ? freelancerStats : clientStats;
 
   const getStatusColor = (status) => {
-    switch (status.toLowerCase()) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'in progress': return 'bg-blue-100 text-blue-800';
+    switch (status?.toLowerCase()) {
+      case 'completed': case 'released': return 'bg-green-100 text-green-800';
+      case 'in_progress': case 'in_escrow': return 'bg-blue-100 text-blue-800';
       case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'in review': return 'bg-purple-100 text-purple-800';
-      case 'active': return 'bg-green-100 text-green-800';
-      case 'almost complete': return 'bg-teal-100 text-teal-800';
+      case 'in review': case 'disputed': return 'bg-purple-100 text-purple-800';
+      case 'open': return 'bg-green-100 text-green-800';
+      case 'cancelled': case 'refunded': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -324,6 +162,14 @@ const Dashboard = () => {
     setPaymentFilter(e.target.value);
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -333,34 +179,10 @@ const Dashboard = () => {
             <div>
               <h1 className="text-xl font-semibold text-gray-900">Dashboard</h1>
               <p className="text-sm text-gray-500">
-                Welcome back, {userRole === 'freelancer' ? 'Alex Thompson' : 'Sarah Johnson'}
+                Welcome back, {user?.firstName} {user?.lastName}
               </p>
             </div>
             <div className="flex items-center space-x-4">
-              {/* Role Switcher */}
-              <div className="flex bg-gray-100 rounded-lg p-1">
-                <button
-                  onClick={() => setUserRole('freelancer')}
-                  className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                    userRole === 'freelancer' 
-                      ? 'bg-white text-blue-600 shadow-sm' 
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  Freelancer
-                </button>
-                <button
-                  onClick={() => setUserRole('client')}
-                  className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                    userRole === 'client' 
-                      ? 'bg-white text-teal-600 shadow-sm' 
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  Client
-                </button>
-              </div>
-              
               <button className="p-2 text-gray-400 hover:text-gray-600 relative">
                 <Bell className="h-6 w-6" />
                 <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
@@ -370,10 +192,7 @@ const Dashboard = () => {
               </button>
               <div className="flex items-center space-x-2">
                 <img
-                  src={userRole === 'freelancer' 
-                    ? "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=100"
-                    : "https://images.pexels.com/photos/3756679/pexels-photo-3756679.jpeg?auto=compress&cs=tinysrgb&w=100"
-                  }
+                  src={user?.avatar || "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=100"}
                   alt="Profile"
                   className="h-8 w-8 rounded-full"
                 />
@@ -435,62 +254,39 @@ const Dashboard = () => {
               {/* Active Projects */}
               <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border">
                 <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-                  <h2 className="text-lg font-semibold text-gray-900">Active Projects</h2>
+                  <h2 className="text-lg font-semibold text-gray-900">Recent Projects</h2>
                   <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
                     View All
                   </button>
                 </div>
                 <div className="p-6">
                   <div className="space-y-6">
-                    {activeProjects.slice(0, 3).map((project) => (
-                      <div key={project.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                    {projects.slice(0, 3).map((project) => (
+                      <div key={project._id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
                         <div className="flex items-start justify-between mb-3">
                           <div>
                             <h3 className="font-medium text-gray-900">{project.title}</h3>
                             <p className="text-sm text-gray-600">
-                              {userRole === 'freelancer' ? project.client : project.freelancer}
+                              {user?.role === 'freelancer' 
+                                ? `Client: ${project.client?.firstName} ${project.client?.lastName}` 
+                                : `Freelancer: ${project.freelancer?.firstName || 'Not assigned'} ${project.freelancer?.lastName || ''}`
+                              }
                             </p>
                           </div>
-                          <div className="flex items-center space-x-2">
-                            {project.priority && (
-                              <span className={`text-xs font-medium ${getPriorityColor(project.priority)}`}>
-                                {project.priority}
-                              </span>
-                            )}
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(project.status)}`}>
-                              {project.status}
-                            </span>
-                          </div>
-                        </div>
-                        
-                        <div className="mb-3">
-                          <div className="flex items-center justify-between text-sm text-gray-600 mb-1">
-                            <span>Progress</span>
-                            <span>{project.progress}%</span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div
-                              className="bg-blue-600 h-2 rounded-full"
-                              style={{ width: `${project.progress}%` }}
-                            ></div>
-                          </div>
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(project.status)}`}>
+                            {project.status?.replace('_', ' ')}
+                          </span>
                         </div>
                         
                         <div className="flex items-center justify-between text-sm text-gray-600">
                           <span className="flex items-center">
                             <Calendar className="h-4 w-4 mr-1" />
-                            {project.deadline}
+                            {project.timeline}
                           </span>
                           <span className="flex items-center">
                             <DollarSign className="h-4 w-4 mr-1" />
-                            {project.budget}
+                            ${project.budget?.min} - ${project.budget?.max}
                           </span>
-                        </div>
-                        
-                        <div className="mt-3 pt-3 border-t border-gray-100">
-                          <p className="text-sm text-gray-600">
-                            <span className="font-medium">Next:</span> {project.nextMilestone}
-                          </p>
                         </div>
                       </div>
                     ))}
@@ -507,16 +303,20 @@ const Dashboard = () => {
                   </div>
                   <div className="p-6">
                     <div className="space-y-4">
-                      {recentMessages.map((message) => (
-                        <div key={message.id} className="flex items-start space-x-3">
-                          <div className={`w-2 h-2 rounded-full mt-2 ${message.unread ? 'bg-blue-500' : 'bg-gray-400'}`}></div>
+                      {messages.slice(0, 3).map((message) => (
+                        <div key={message._id} className="flex items-start space-x-3">
+                          <div className={`w-2 h-2 rounded-full mt-2 ${!message.isRead ? 'bg-blue-500' : 'bg-gray-400'}`}></div>
                           <div className="flex-1">
                             <div className="flex items-center justify-between">
-                              <p className="text-sm font-medium text-gray-900">{message.sender}</p>
-                              <p className="text-xs text-gray-500">{message.time}</p>
+                              <p className="text-sm font-medium text-gray-900">
+                                {message.sender?.firstName} {message.sender?.lastName}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {new Date(message.createdAt).toLocaleDateString()}
+                              </p>
                             </div>
-                            <p className="text-sm text-gray-600 mt-1 line-clamp-2">{message.message}</p>
-                            <p className="text-xs text-gray-500 mt-1">{message.project}</p>
+                            <p className="text-sm text-gray-600 mt-1 line-clamp-2">{message.content}</p>
+                            <p className="text-xs text-gray-500 mt-1">{message.project?.title}</p>
                           </div>
                         </div>
                       ))}
@@ -531,7 +331,7 @@ const Dashboard = () => {
                   </div>
                   <div className="p-6">
                     <div className="space-y-3">
-                      {userRole === 'freelancer' ? (
+                      {user?.role === 'freelancer' ? (
                         <>
                           <button className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                             Browse New Projects
@@ -580,24 +380,27 @@ const Dashboard = () => {
                 </div>
                 <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
                   <Plus className="h-4 w-4" />
-                  <span>{userRole === 'freelancer' ? 'Apply to Project' : 'New Project'}</span>
+                  <span>{user?.role === 'freelancer' ? 'Apply to Project' : 'New Project'}</span>
                 </button>
               </div>
             </div>
             <div className="p-6">
               <div className="space-y-4">
-                {activeProjects.map((project) => (
-                  <div key={project.id} className="border rounded-lg p-6 hover:bg-gray-50 transition-colors">
+                {projects.map((project) => (
+                  <div key={project._id} className="border rounded-lg p-6 hover:bg-gray-50 transition-colors">
                     <div className="flex items-start justify-between mb-4">
                       <div>
                         <h3 className="text-lg font-medium text-gray-900 mb-1">{project.title}</h3>
                         <p className="text-gray-600">
-                          {userRole === 'freelancer' ? `Client: ${project.client}` : `Freelancer: ${project.freelancer}`}
+                          {user?.role === 'freelancer' 
+                            ? `Client: ${project.client?.firstName} ${project.client?.lastName}` 
+                            : `Freelancer: ${project.freelancer?.firstName || 'Not assigned'} ${project.freelancer?.lastName || ''}`
+                          }
                         </p>
                       </div>
                       <div className="flex items-center space-x-3">
                         <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(project.status)}`}>
-                          {project.status}
+                          {project.status?.replace('_', ' ')}
                         </span>
                         <button className="p-2 text-gray-400 hover:text-gray-600">
                           <Eye className="h-4 w-4" />
@@ -611,131 +414,32 @@ const Dashboard = () => {
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                       <div>
                         <p className="text-sm text-gray-500">Budget</p>
-                        <p className="font-medium">{project.budget}</p>
+                        <p className="font-medium">${project.budget?.min} - ${project.budget?.max}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-500">Deadline</p>
-                        <p className="font-medium">{project.deadline}</p>
+                        <p className="text-sm text-gray-500">Timeline</p>
+                        <p className="font-medium">{project.timeline}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-500">Progress</p>
-                        <p className="font-medium">{project.progress}%</p>
+                        <p className="text-sm text-gray-500">Proposals</p>
+                        <p className="font-medium">{project.proposalCount || 0}</p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-500">Priority</p>
-                        <p className={`font-medium ${getPriorityColor(project.priority)}`}>{project.priority}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="mb-4">
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          className="bg-blue-600 h-2 rounded-full"
-                          style={{ width: `${project.progress}%` }}
-                        ></div>
+                        <p className="text-sm text-gray-500">Category</p>
+                        <p className="font-medium">{project.category}</p>
                       </div>
                     </div>
                     
                     <div className="flex items-center justify-between">
                       <p className="text-sm text-gray-600">
-                        <span className="font-medium">Next Milestone:</span> {project.nextMilestone}
+                        <span className="font-medium">Created:</span> {new Date(project.createdAt).toLocaleDateString()}
                       </p>
                       <div className="flex items-center space-x-2">
                         <button className="px-3 py-1 bg-blue-100 text-blue-700 rounded-md text-sm font-medium hover:bg-blue-200 transition-colors">
                           View Details
                         </button>
                         <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-200 transition-colors">
-                          Message {userRole === 'freelancer' ? 'Client' : 'Freelancer'}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Contracts Tab */}
-        {activeTab === 'contracts' && (
-          <div className="bg-white rounded-lg shadow-sm border">
-            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Contracts</h2>
-              <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
-                <Plus className="h-4 w-4" />
-                <span>New Contract</span>
-              </button>
-            </div>
-            <div className="p-6">
-              <div className="space-y-4">
-                {contracts.map((contract) => (
-                  <div key={contract.id} className="border rounded-lg p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h3 className="text-lg font-medium text-gray-900 mb-1">{contract.title}</h3>
-                        <p className="text-gray-600 mb-2">{contract.project}</p>
-                        <p className="text-sm text-gray-500">
-                          {userRole === 'freelancer' ? `Client: ${contract.client}` : `Freelancer: ${contract.freelancer}`}
-                        </p>
-                      </div>
-                      <div className="flex items-center space-x-3">
-                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(contract.status)}`}>
-                          {contract.status}
-                        </span>
-                        <button className="p-2 text-gray-400 hover:text-gray-600">
-                          <Download className="h-4 w-4" />
-                        </button>
-                        <button className="p-2 text-gray-400 hover:text-gray-600">
-                          <Eye className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                      <div>
-                        <p className="text-sm text-gray-500">Contract Value</p>
-                        <p className="font-medium text-lg">{contract.value}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Signed Date</p>
-                        <p className="font-medium">{contract.signedDate}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Milestones</p>
-                        <p className="font-medium">{contract.completedMilestones}/{contract.milestones}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Progress</p>
-                        <p className="font-medium">{Math.round((contract.completedMilestones / contract.milestones) * 100)}%</p>
-                      </div>
-                    </div>
-                    
-                    <div className="mb-4">
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          className="bg-green-600 h-2 rounded-full"
-                          style={{ width: `${(contract.completedMilestones / contract.milestones) * 100}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className="flex items-center space-x-1">
-                          <Shield className="h-4 w-4 text-green-500" />
-                          <span className="text-sm text-gray-600">Escrow Protected</span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <CheckCircle2 className="h-4 w-4 text-blue-500" />
-                          <span className="text-sm text-gray-600">Digitally Signed</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <button className="px-3 py-1 bg-blue-100 text-blue-700 rounded-md text-sm font-medium hover:bg-blue-200 transition-colors">
-                          View Contract
-                        </button>
-                        <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-200 transition-colors">
-                          Download PDF
+                          Message {user?.role === 'freelancer' ? 'Client' : 'Freelancer'}
                         </button>
                       </div>
                     </div>
@@ -758,9 +462,10 @@ const Dashboard = () => {
                   className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="all">All Payments</option>
-                  <option value="completed">Completed</option>
+                  <option value="released">Completed</option>
                   <option value="pending">Pending</option>
-                  <option value="in review">In Review</option>
+                  <option value="in_escrow">In Escrow</option>
+                  <option value="disputed">Disputed</option>
                 </select>
                 <button className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
                   <Download className="h-4 w-4" />
@@ -776,17 +481,17 @@ const Dashboard = () => {
                   </div>
                 ) : (
                   filteredPayments.map((payment) => (
-                    <div key={payment.id} className="border rounded-lg p-6">
+                    <div key={payment._id} className="border rounded-lg p-6">
                       <div className="flex items-start justify-between mb-4">
                         <div>
-                          <h3 className="text-lg font-medium text-gray-900 mb-1">{payment.project}</h3>
-                          <p className="text-gray-600 mb-1">{payment.milestone}</p>
-                          <p className="text-sm text-gray-500">{payment.type}</p>
+                          <h3 className="text-lg font-medium text-gray-900 mb-1">{payment.project?.title}</h3>
+                          <p className="text-gray-600 mb-1">Payment #{payment.transactionId}</p>
+                          <p className="text-sm text-gray-500">{payment.type} payment</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-2xl font-bold text-gray-900 mb-1">{payment.amount}</p>
+                          <p className="text-2xl font-bold text-gray-900 mb-1">${payment.amount}</p>
                           <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(payment.status)}`}>
-                            {payment.status}
+                            {payment.status?.replace('_', ' ')}
                           </span>
                         </div>
                       </div>
@@ -794,36 +499,36 @@ const Dashboard = () => {
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div>
                           <p className="text-sm text-gray-500">Payment Date</p>
-                          <p className="font-medium">{payment.date}</p>
+                          <p className="font-medium">{new Date(payment.createdAt).toLocaleDateString()}</p>
                         </div>
                         <div>
                           <p className="text-sm text-gray-500">Payment Method</p>
-                          <p className="font-medium">{payment.method}</p>
+                          <p className="font-medium">{payment.paymentMethod?.replace('_', ' ')}</p>
                         </div>
                         <div>
                           <p className="text-sm text-gray-500">Transaction ID</p>
-                          <p className="font-medium text-blue-600">#TXN{payment.id}2025</p>
+                          <p className="font-medium text-blue-600">{payment.transactionId}</p>
                         </div>
                       </div>
                       
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
-                          {payment.status === 'Completed' && (
+                          {payment.status === 'released' && (
                             <div className="flex items-center space-x-1">
                               <CheckCircle className="h-4 w-4 text-green-500" />
                               <span className="text-sm text-gray-600">Payment Released</span>
                             </div>
                           )}
-                          {payment.status === 'Pending' && (
+                          {payment.status === 'pending' && (
                             <div className="flex items-center space-x-1">
                               <Clock className="h-4 w-4 text-yellow-500" />
                               <span className="text-sm text-gray-600">Awaiting Approval</span>
                             </div>
                           )}
-                          {payment.status === 'In Review' && (
+                          {payment.status === 'in_escrow' && (
                             <div className="flex items-center space-x-1">
-                              <AlertCircle className="h-4 w-4 text-blue-500" />
-                              <span className="text-sm text-gray-600">Under Review</span>
+                              <Shield className="h-4 w-4 text-blue-500" />
+                              <span className="text-sm text-gray-600">In Escrow</span>
                             </div>
                           )}
                           <div className="flex items-center space-x-1">
@@ -835,7 +540,7 @@ const Dashboard = () => {
                           <button className="px-3 py-1 bg-blue-100 text-blue-700 rounded-md text-sm font-medium hover:bg-blue-200 transition-colors">
                             View Details
                           </button>
-                          {payment.status === 'Completed' && (
+                          {payment.status === 'released' && (
                             <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-200 transition-colors">
                               Download Receipt
                             </button>
@@ -855,11 +560,11 @@ const Dashboard = () => {
           <div className="bg-white rounded-lg shadow-sm border">
             <div className="p-6 border-b border-gray-200 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900">
-                {userRole === 'freelancer' ? 'Skill Endorsements' : 'Give Endorsements'}
+                {user?.role === 'freelancer' ? 'Skill Endorsements' : 'Give Endorsements'}
               </h2>
               <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
                 <Plus className="h-4 w-4" />
-                <span>{userRole === 'freelancer' ? 'Request Endorsement' : 'Give Endorsement'}</span>
+                <span>{user?.role === 'freelancer' ? 'Request Endorsement' : 'Give Endorsement'}</span>
               </button>
             </div>
             <div className="p-6">
@@ -917,7 +622,7 @@ const Dashboard = () => {
                         View All
                       </button>
                       <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-200 transition-colors">
-                        {userRole === 'freelancer' ? 'Share Skill' : 'Endorse Skill'}
+                        {user?.role === 'freelancer' ? 'Share Skill' : 'Endorse Skill'}
                       </button>
                     </div>
                   </div>
@@ -927,17 +632,17 @@ const Dashboard = () => {
               {/* Endorsement Request/Give Section */}
               <div className="mt-8 bg-gradient-to-r from-blue-50 to-teal-50 rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  {userRole === 'freelancer' ? 'Request New Endorsements' : 'Give Endorsements to Freelancers'}
+                  {user?.role === 'freelancer' ? 'Request New Endorsements' : 'Give Endorsements to Freelancers'}
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  {userRole === 'freelancer' 
+                  {user?.role === 'freelancer' 
                     ? 'Ask your recent clients to endorse your skills and build your credibility on the platform.'
                     : 'Endorse the skills of freelancers you\'ve worked with to help them build their reputation.'
                   }
                 </p>
                 <div className="flex items-center space-x-4">
                   <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                    {userRole === 'freelancer' ? 'Send Endorsement Request' : 'Give Endorsement'}
+                    {user?.role === 'freelancer' ? 'Send Endorsement Request' : 'Give Endorsement'}
                   </button>
                   <button className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                     Learn More

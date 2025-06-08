@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Users, Briefcase, Mail, Lock, User, Building, Phone, MapPin } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [userRole, setUserRole] = useState('freelancer');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const navigate = useNavigate();
+  const { login, register } = useAuth();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -28,10 +34,44 @@ const Auth = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    console.log('Form submitted:', { ...formData, userRole, isLogin });
+    setError('');
+    setLoading(true);
+
+    try {
+      if (isLogin) {
+        await login(formData.email, formData.password);
+      } else {
+        if (formData.password !== formData.confirmPassword) {
+          throw new Error('Passwords do not match');
+        }
+        
+        if (!formData.agreeToTerms) {
+          throw new Error('Please agree to the terms and conditions');
+        }
+
+        const userData = {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          password: formData.password,
+          role: userRole,
+          phone: formData.phone,
+          location: formData.location,
+          company: userRole === 'client' ? formData.company : undefined
+        };
+
+        await register(userData);
+      }
+      
+      // Redirect to dashboard after successful login/register
+      navigate('/dashboard');
+    } catch (err: any) {
+      setError(err.message || 'An error occurred');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -49,6 +89,13 @@ const Auth = () => {
             }
           </p>
         </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            {error}
+          </div>
+        )}
 
         {/* Role Selection (Only for Registration) */}
         {!isLogin && (
@@ -94,7 +141,7 @@ const Auth = () => {
             {!isLogin && (
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="firstName\" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
                     First Name
                   </label>
                   <div className="relative">
@@ -294,9 +341,10 @@ const Auth = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 px-4 rounded-lg transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
-              {isLogin ? 'Sign In' : 'Create Account'}
+              {loading ? 'Please wait...' : (isLogin ? 'Sign In' : 'Create Account')}
             </button>
 
             {/* Forgot Password (Login Only) */}
@@ -316,25 +364,26 @@ const Auth = () => {
               {' '}
               <button
                 type="button"
-                onClick={() => setIsLogin(!isLogin)}
+                onClick={() => {
+                  setIsLogin(!isLogin);
+                  setError('');
+                  setFormData({
+                    email: '',
+                    password: '',
+                    confirmPassword: '',
+                    firstName: '',
+                    lastName: '',
+                    phone: '',
+                    company: '',
+                    location: '',
+                    agreeToTerms: false
+                  });
+                }}
                 className="text-blue-600 hover:text-blue-500 font-medium"
               >
                 {isLogin ? 'Sign up' : 'Sign in'}
               </button>
             </p>
-          </div>
-
-          {/* Demo Access */}
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <p className="text-center text-sm text-gray-500 mb-4">
-              Want to explore? Try our demo:
-            </p>
-            <Link
-              to="/dashboard"
-              className="block w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg text-center transition-colors"
-            >
-              View Demo Dashboard
-            </Link>
           </div>
         </div>
       </div>
