@@ -225,11 +225,11 @@ const Contact = () => {
               <div className="space-y-4">
                 <div className="bg-white rounded-lg p-4">
                   <h3 className="font-semibold text-gray-900">Project Leadership</h3>
-                  <p className="text-gray-600 text-sm">Rajesh Kumar - Lead Developer & Architecture</p>
+                  <p className="text-gray-600 text-sm">Veda Samhith Manthena - Lead Developer & Architecture</p>
                 </div>
                 <div className="bg-white rounded-lg p-4">
                   <h3 className="font-semibold text-gray-900">Development Team</h3>
-                  <p className="text-gray-600 text-sm">Priya, Arjun, Sneha - Full Stack Development</p>
+                  <p className="text-gray-600 text-sm">Vivek, Sadvika, Amulya - Full Stack Development</p>
                 </div>
               </div>
             </div>
