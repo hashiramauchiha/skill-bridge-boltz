@@ -4,25 +4,25 @@ import { Users, Target, Award, Shield } from 'lucide-react';
 const About = () => {
   const team = [
     {
-      name: 'Rajesh Kumar',
+      name: 'Veda Samhith Manthena',
       role: 'Project Lead & Full Stack Developer',
       image: 'https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=400',
       description: 'Leading the development of secure marketplace architecture'
     },
     {
-      name: 'Priya Reddy',
+      name: 'CH Vivek',
       role: 'Frontend Developer & UI/UX Designer',
       image: 'https://images.pexels.com/photos/3756679/pexels-photo-3756679.jpeg?auto=compress&cs=tinysrgb&w=400',
       description: 'Crafting intuitive user experiences and responsive designs'
     },
     {
-      name: 'Arjun Singh',
+      name: 'Sadvika Chekkilla',
       role: 'Backend Developer & Security Engineer',
       image: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=400',
       description: 'Implementing secure payment systems and data protection'
     },
     {
-      name: 'Sneha Sharma',
+      name: 'Amulya Koppula',
       role: 'Database Engineer & System Analyst',
       image: 'https://images.pexels.com/photos/3786525/pexels-photo-3786525.jpeg?auto=compress&cs=tinysrgb&w=400',
       description: 'Designing scalable database architecture and analytics'
