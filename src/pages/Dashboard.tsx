@@ -1,40 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  BarChart3, 
-  Calendar, 
-  CheckCircle, 
-  Clock, 
-  CreditCard, 
-  FileText, 
-  MessageSquare, 
-  Star, 
-  TrendingUp,
-  User,
-  DollarSign,
-  Briefcase,
-  Award,
-  Bell,
-  Settings,
-  Users,
-  Plus,
-  Download,
-  Eye,
-  Edit,
-  Filter,
-  Search,
-  ArrowUpRight,
-  ArrowDownRight,
-  Shield,
-  AlertCircle,
-  CheckCircle2,
-  FileCheck,
-  FileX,
-  FileClock,
-  Signature,
-  Scale,
-  AlertTriangle,
-  ExternalLink
-} from 'lucide-react';
+import { BarChart3, Calendar, CheckCircle, Clock, CreditCard, FileText, MessageSquare, Star, TrendingUp, User, DollarSign, Briefcase, Award, Bell, Settings, Users, Plus, Download, Eye, Edit, Filter, Search, ArrowUpRight, ArrowDownRight, Shield, AlertCircle, CheckCircle2, FileCheck, FileX, FileClock, FileSignature as Signature, Scale, AlertTriangle, ExternalLink } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 
