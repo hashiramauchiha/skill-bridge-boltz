@@ -12,7 +12,7 @@ const Auth = () => {
   const [error, setError] = useState('');
 
   const navigate = useNavigate();
-  const { login, register } = useAuth();
+  const { login, register, setDemoUser } = useAuth();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -74,6 +74,11 @@ const Auth = () => {
     }
   };
 
+  const handleDemoLogin = (role: 'freelancer' | 'client') => {
+    setDemoUser(role);
+    navigate('/dashboard');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
@@ -87,6 +92,31 @@ const Auth = () => {
               ? 'Sign in to your account to continue' 
               : 'Create your account and start connecting'
             }
+          </p>
+        </div>
+
+        {/* Demo Mode Notice */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <h3 className="text-sm font-semibold text-blue-900 mb-2">Try Demo Mode</h3>
+          <p className="text-xs text-blue-700 mb-3">
+            Experience SkillBridge without registration. Demo data is used when backend is unavailable.
+          </p>
+          <div className="flex space-x-2">
+            <button
+              onClick={() => handleDemoLogin('freelancer')}
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-xs font-medium transition-colors"
+            >
+              Demo Freelancer
+            </button>
+            <button
+              onClick={() => handleDemoLogin('client')}
+              className="flex-1 bg-teal-600 hover:bg-teal-700 text-white px-3 py-2 rounded text-xs font-medium transition-colors"
+            >
+              Demo Client
+            </button>
+          </div>
+          <p className="text-xs text-blue-600 mt-2">
+            Or use: demo@freelancer.com / demo@client.com with password: demo123
           </p>
         </div>
 

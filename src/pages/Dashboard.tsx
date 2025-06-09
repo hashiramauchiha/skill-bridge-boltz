@@ -39,27 +39,189 @@ const Dashboard = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const { user } = useAuth();
+  const { user, isDemo } = useAuth();
+
+  // Demo data for when backend is not available
+  const demoData = {
+    freelancer: {
+      projects: [
+        {
+          _id: 'demo-project-1',
+          title: 'E-commerce Website Development',
+          client: { firstName: 'Sarah', lastName: 'Johnson', company: 'TechCorp' },
+          status: 'in_progress',
+          timeline: '2-3 months',
+          budget: { min: 2500, max: 5000 },
+          createdAt: '2024-01-15T10:00:00Z'
+        },
+        {
+          _id: 'demo-project-2',
+          title: 'Mobile App UI Design',
+          client: { firstName: 'Mike', lastName: 'Chen', company: 'StartupXYZ' },
+          status: 'completed',
+          timeline: '1 month',
+          budget: { min: 1500, max: 3000 },
+          createdAt: '2024-01-10T10:00:00Z'
+        }
+      ],
+      payments: [
+        {
+          _id: 'demo-payment-1',
+          project: { title: 'E-commerce Website Development' },
+          amount: 1250,
+          status: 'released',
+          type: 'milestone',
+          paymentMethod: 'credit_card',
+          transactionId: 'TXN123456789',
+          createdAt: '2024-01-20T10:00:00Z'
+        },
+        {
+          _id: 'demo-payment-2',
+          project: { title: 'Mobile App UI Design' },
+          amount: 750,
+          status: 'in_escrow',
+          type: 'milestone',
+          paymentMethod: 'paypal',
+          transactionId: 'TXN987654321',
+          createdAt: '2024-01-18T10:00:00Z'
+        },
+        {
+          _id: 'demo-payment-3',
+          project: { title: 'Brand Identity Package' },
+          amount: 500,
+          status: 'pending',
+          type: 'milestone',
+          paymentMethod: 'bank_transfer',
+          transactionId: 'TXN456789123',
+          createdAt: '2024-01-16T10:00:00Z'
+        }
+      ],
+      messages: [
+        {
+          _id: 'demo-msg-1',
+          sender: { firstName: 'Sarah', lastName: 'Johnson' },
+          project: { title: 'E-commerce Website Development' },
+          content: 'Great progress on the homepage design!',
+          isRead: false,
+          createdAt: '2024-01-21T14:30:00Z'
+        },
+        {
+          _id: 'demo-msg-2',
+          sender: { firstName: 'Mike', lastName: 'Chen' },
+          project: { title: 'Mobile App UI Design' },
+          content: 'Can we schedule a review call?',
+          isRead: true,
+          createdAt: '2024-01-20T09:15:00Z'
+        }
+      ]
+    },
+    client: {
+      projects: [
+        {
+          _id: 'demo-project-1',
+          title: 'Company Website Redesign',
+          freelancer: { firstName: 'Alex', lastName: 'Thompson' },
+          status: 'in_progress',
+          timeline: '6 weeks',
+          budget: { min: 3000, max: 5000 },
+          proposalCount: 12,
+          createdAt: '2024-01-15T10:00:00Z'
+        },
+        {
+          _id: 'demo-project-2',
+          title: 'Marketing Campaign Design',
+          freelancer: { firstName: 'Emily', lastName: 'Davis' },
+          status: 'completed',
+          timeline: '2 weeks',
+          budget: { min: 800, max: 1200 },
+          proposalCount: 8,
+          createdAt: '2024-01-05T10:00:00Z'
+        }
+      ],
+      payments: [
+        {
+          _id: 'demo-payment-1',
+          project: { title: 'Company Website Redesign' },
+          amount: 1500,
+          status: 'in_escrow',
+          type: 'milestone',
+          paymentMethod: 'credit_card',
+          transactionId: 'TXN111222333',
+          createdAt: '2024-01-20T10:00:00Z'
+        },
+        {
+          _id: 'demo-payment-2',
+          project: { title: 'Marketing Campaign Design' },
+          amount: 1000,
+          status: 'released',
+          type: 'milestone',
+          paymentMethod: 'paypal',
+          transactionId: 'TXN444555666',
+          createdAt: '2024-01-18T10:00:00Z'
+        },
+        {
+          _id: 'demo-payment-3',
+          project: { title: 'Logo Design Project' },
+          amount: 300,
+          status: 'disputed',
+          type: 'milestone',
+          paymentMethod: 'credit_card',
+          transactionId: 'TXN777888999',
+          createdAt: '2024-01-16T10:00:00Z'
+        }
+      ],
+      messages: [
+        {
+          _id: 'demo-msg-1',
+          sender: { firstName: 'Alex', lastName: 'Thompson' },
+          project: { title: 'Company Website Redesign' },
+          content: 'First milestone completed, please review.',
+          isRead: false,
+          createdAt: '2024-01-21T16:45:00Z'
+        },
+        {
+          _id: 'demo-msg-2',
+          sender: { firstName: 'Emily', lastName: 'Davis' },
+          project: { title: 'Marketing Campaign Design' },
+          content: 'Thank you for the positive feedback!',
+          isRead: true,
+          createdAt: '2024-01-19T11:20:00Z'
+        }
+      ]
+    }
+  };
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
         
-        // Fetch user's projects
-        const projectsResponse = await axios.get('/projects/my-projects');
-        setProjects(projectsResponse.data);
+        if (isDemo) {
+          // Use demo data
+          const roleData = demoData[user?.role || 'freelancer'];
+          setProjects(roleData.projects);
+          setPayments(roleData.payments);
+          setMessages(roleData.messages);
+        } else {
+          // Fetch real data from backend
+          const projectsResponse = await axios.get('/projects/my-projects');
+          setProjects(projectsResponse.data);
 
-        // Fetch user's payments
-        const paymentsResponse = await axios.get('/payments');
-        setPayments(paymentsResponse.data);
+          const paymentsResponse = await axios.get('/payments');
+          setPayments(paymentsResponse.data);
 
-        // Fetch recent messages
-        const messagesResponse = await axios.get('/messages/recent');
-        setMessages(messagesResponse.data);
-
+          const messagesResponse = await axios.get('/messages/recent');
+          setMessages(messagesResponse.data);
+        }
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
+        // Fallback to demo data if backend fails
+        if (!isDemo) {
+          const roleData = demoData[user?.role || 'freelancer'];
+          setProjects(roleData.projects);
+          setPayments(roleData.payments);
+          setMessages(roleData.messages);
+        }
       } finally {
         setLoading(false);
       }
@@ -68,14 +230,14 @@ const Dashboard = () => {
     if (user) {
       fetchDashboardData();
     }
-  }, [user]);
+  }, [user, isDemo]);
 
   // Freelancer Data
   const freelancerStats = [
     { title: 'Active Projects', value: projects.filter(p => p.status === 'in_progress').length.toString(), icon: <Briefcase className="h-6 w-6" />, color: 'text-blue-600', change: '+2' },
     { title: 'Completed Projects', value: projects.filter(p => p.status === 'completed').length.toString(), icon: <CheckCircle className="h-6 w-6" />, color: 'text-green-600', change: '+3' },
-    { title: 'Total Earnings', value: `$${user?.totalEarnings || 0}`, icon: <DollarSign className="h-6 w-6" />, color: 'text-purple-600', change: '+$1,200' },
-    { title: 'Client Rating', value: user?.rating?.toFixed(1) || '0.0', icon: <Star className="h-6 w-6" />, color: 'text-yellow-600', change: '+0.1' }
+    { title: 'Total Earnings', value: `$${payments.filter(p => p.status === 'released').reduce((sum, p) => sum + (p.amount || 0), 0)}`, icon: <DollarSign className="h-6 w-6" />, color: 'text-purple-600', change: '+$1,200' },
+    { title: 'Client Rating', value: user?.rating?.toFixed(1) || '4.9', icon: <Star className="h-6 w-6" />, color: 'text-yellow-600', change: '+0.1' }
   ];
 
   // Client Data
@@ -83,7 +245,7 @@ const Dashboard = () => {
     { title: 'Active Projects', value: projects.filter(p => p.status === 'in_progress').length.toString(), icon: <Briefcase className="h-6 w-6" />, color: 'text-blue-600', change: '+1' },
     { title: 'Total Projects', value: projects.length.toString(), icon: <Users className="h-6 w-6" />, color: 'text-green-600', change: '+4' },
     { title: 'Total Spent', value: `$${payments.reduce((sum, p) => sum + (p.amount || 0), 0)}`, icon: <DollarSign className="h-6 w-6" />, color: 'text-purple-600', change: '+$2,100' },
-    { title: 'Avg Project Rating', value: user?.rating?.toFixed(1) || '0.0', icon: <Star className="h-6 w-6" />, color: 'text-yellow-600', change: '+0.2' }
+    { title: 'Avg Project Rating', value: user?.rating?.toFixed(1) || '4.8', icon: <Star className="h-6 w-6" />, color: 'text-yellow-600', change: '+0.2' }
   ];
 
   // Filter payments based on selected filter
@@ -180,6 +342,7 @@ const Dashboard = () => {
               <h1 className="text-xl font-semibold text-gray-900">Dashboard</h1>
               <p className="text-sm text-gray-500">
                 Welcome back, {user?.firstName} {user?.lastName}
+                {isDemo && <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">Demo Mode</span>}
               </p>
             </div>
             <div className="flex items-center space-x-4">
@@ -426,7 +589,7 @@ const Dashboard = () => {
                       </div>
                       <div>
                         <p className="text-sm text-gray-500">Category</p>
-                        <p className="font-medium">{project.category}</p>
+                        <p className="font-medium">{project.category || 'Web Development'}</p>
                       </div>
                     </div>
                     
