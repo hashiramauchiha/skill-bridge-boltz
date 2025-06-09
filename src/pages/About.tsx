@@ -6,25 +6,25 @@ const About = () => {
     {
       name: 'Veda Samhith Manthena',
       role: 'Project Lead & Full Stack Developer',
-      image: 'https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=400',
+      image: '/src/assets/veda.jpg',
       description: 'Leading the development of secure marketplace architecture'
     },
     {
       name: 'CH Vivek',
       role: 'Frontend Developer & UI/UX Designer',
-      image: 'https://images.pexels.com/photos/3756679/pexels-photo-3756679.jpeg?auto=compress&cs=tinysrgb&w=400',
+      image: '/src/assets/vivek.jpg',
       description: 'Crafting intuitive user experiences and responsive designs'
     },
     {
       name: 'Sadvika Chekkilla',
       role: 'Backend Developer & Security Engineer',
-      image: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=400',
+      image: '/src/assets/sadvika.jpg',
       description: 'Implementing secure payment systems and data protection'
     },
     {
       name: 'Amulya Koppula',
       role: 'Database Engineer & System Analyst',
-      image: 'https://images.pexels.com/photos/3786525/pexels-photo-3786525.jpeg?auto=compress&cs=tinysrgb&w=400',
+      image: '/src/assets/Amulya.jpg',
       description: 'Designing scalable database architecture and analytics'
     }
   ];
@@ -162,20 +162,21 @@ const About = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {team.map((member, index) => (
               <div key={index} className="text-center group">
-                <div className="relative mb-4 mx-auto w-32 h-32">
+                <div className="relative mb-6 mx-auto w-48 h-48 overflow-hidden rounded-2xl shadow-lg group-hover:shadow-xl transition-all duration-300">
                   <img
                     src={member.image}
                     alt={member.name}
-                    className="w-full h-full object-cover rounded-full shadow-lg group-hover:shadow-xl transition-shadow"
+                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
                   {member.name}
                 </h3>
-                <p className="text-blue-600 font-medium mb-3">
+                <p className="text-blue-600 font-semibold mb-3 text-sm">
                   {member.role}
                 </p>
-                <p className="text-gray-600 text-sm leading-relaxed">
+                <p className="text-gray-600 text-sm leading-relaxed px-2">
                   {member.description}
                 </p>
               </div>
