@@ -26,7 +26,14 @@ import {
   ArrowDownRight,
   Shield,
   AlertCircle,
-  CheckCircle2
+  CheckCircle2,
+  FileCheck,
+  FileX,
+  FileClock,
+  Signature,
+  Scale,
+  AlertTriangle,
+  ExternalLink
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
@@ -34,9 +41,11 @@ import axios from 'axios';
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [paymentFilter, setPaymentFilter] = useState('all');
+  const [contractFilter, setContractFilter] = useState('all');
   const [payments, setPayments] = useState([]);
   const [projects, setProjects] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [contracts, setContracts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const { user, isDemo } = useAuth();
@@ -113,6 +122,84 @@ const Dashboard = () => {
           isRead: true,
           createdAt: '2024-01-20T09:15:00Z'
         }
+      ],
+      contracts: [
+        {
+          _id: 'demo-contract-1',
+          title: 'E-commerce Website Development Agreement',
+          project: { title: 'E-commerce Website Development', _id: 'demo-project-1' },
+          client: { firstName: 'Sarah', lastName: 'Johnson', company: 'TechCorp' },
+          freelancer: { firstName: 'Alex', lastName: 'Thompson' },
+          status: 'active',
+          type: 'Web Development Contract',
+          value: 4500,
+          startDate: '2024-01-15T10:00:00Z',
+          endDate: '2024-04-15T10:00:00Z',
+          signedDate: '2024-01-14T10:00:00Z',
+          milestones: [
+            { title: 'Project Setup & Planning', amount: 900, status: 'completed', dueDate: '2024-01-30T10:00:00Z' },
+            { title: 'Frontend Development', amount: 1800, status: 'in_progress', dueDate: '2024-02-28T10:00:00Z' },
+            { title: 'Backend Integration', amount: 1350, status: 'pending', dueDate: '2024-03-31T10:00:00Z' },
+            { title: 'Testing & Deployment', amount: 450, status: 'pending', dueDate: '2024-04-15T10:00:00Z' }
+          ],
+          terms: {
+            paymentSchedule: 'Milestone-based',
+            revisions: '3 rounds included',
+            deliverables: 'Fully functional e-commerce website',
+            timeline: '3 months',
+            cancellationPolicy: '7 days notice required'
+          }
+        },
+        {
+          _id: 'demo-contract-2',
+          title: 'Mobile App UI Design Contract',
+          project: { title: 'Mobile App UI Design', _id: 'demo-project-2' },
+          client: { firstName: 'Mike', lastName: 'Chen', company: 'StartupXYZ' },
+          freelancer: { firstName: 'Alex', lastName: 'Thompson' },
+          status: 'completed',
+          type: 'UI/UX Design Contract',
+          value: 2500,
+          startDate: '2024-01-01T10:00:00Z',
+          endDate: '2024-02-01T10:00:00Z',
+          signedDate: '2023-12-28T10:00:00Z',
+          completedDate: '2024-01-28T10:00:00Z',
+          milestones: [
+            { title: 'User Research & Wireframes', amount: 750, status: 'completed', dueDate: '2024-01-10T10:00:00Z' },
+            { title: 'UI Design & Prototyping', amount: 1250, status: 'completed', dueDate: '2024-01-25T10:00:00Z' },
+            { title: 'Final Delivery & Handoff', amount: 500, status: 'completed', dueDate: '2024-02-01T10:00:00Z' }
+          ],
+          terms: {
+            paymentSchedule: 'Milestone-based',
+            revisions: '2 rounds included',
+            deliverables: 'Complete mobile app UI design',
+            timeline: '1 month',
+            cancellationPolicy: '3 days notice required'
+          }
+        },
+        {
+          _id: 'demo-contract-3',
+          title: 'Brand Identity Design Agreement',
+          project: { title: 'Brand Identity Package', _id: 'demo-project-3' },
+          client: { firstName: 'Lisa', lastName: 'Wang', company: 'Creative Studio' },
+          freelancer: { firstName: 'Alex', lastName: 'Thompson' },
+          status: 'pending_signature',
+          type: 'Brand Design Contract',
+          value: 1800,
+          startDate: '2024-02-01T10:00:00Z',
+          endDate: '2024-03-01T10:00:00Z',
+          milestones: [
+            { title: 'Brand Research & Strategy', amount: 600, status: 'pending', dueDate: '2024-02-10T10:00:00Z' },
+            { title: 'Logo Design & Concepts', amount: 900, status: 'pending', dueDate: '2024-02-20T10:00:00Z' },
+            { title: 'Brand Guidelines & Assets', amount: 300, status: 'pending', dueDate: '2024-03-01T10:00:00Z' }
+          ],
+          terms: {
+            paymentSchedule: 'Milestone-based',
+            revisions: '3 rounds included',
+            deliverables: 'Complete brand identity package',
+            timeline: '1 month',
+            cancellationPolicy: '5 days notice required'
+          }
+        }
       ]
     },
     client: {
@@ -187,6 +274,84 @@ const Dashboard = () => {
           isRead: true,
           createdAt: '2024-01-19T11:20:00Z'
         }
+      ],
+      contracts: [
+        {
+          _id: 'demo-contract-1',
+          title: 'Company Website Redesign Agreement',
+          project: { title: 'Company Website Redesign', _id: 'demo-project-1' },
+          client: { firstName: 'Sarah', lastName: 'Johnson', company: 'TechCorp' },
+          freelancer: { firstName: 'Alex', lastName: 'Thompson' },
+          status: 'active',
+          type: 'Web Development Contract',
+          value: 4200,
+          startDate: '2024-01-15T10:00:00Z',
+          endDate: '2024-03-01T10:00:00Z',
+          signedDate: '2024-01-14T10:00:00Z',
+          milestones: [
+            { title: 'Discovery & Planning', amount: 840, status: 'completed', dueDate: '2024-01-25T10:00:00Z' },
+            { title: 'Design & Prototyping', amount: 1680, status: 'in_progress', dueDate: '2024-02-15T10:00:00Z' },
+            { title: 'Development & Testing', amount: 1260, status: 'pending', dueDate: '2024-02-28T10:00:00Z' },
+            { title: 'Launch & Optimization', amount: 420, status: 'pending', dueDate: '2024-03-01T10:00:00Z' }
+          ],
+          terms: {
+            paymentSchedule: 'Milestone-based',
+            revisions: '2 rounds included',
+            deliverables: 'Fully responsive website redesign',
+            timeline: '6 weeks',
+            cancellationPolicy: '7 days notice required'
+          }
+        },
+        {
+          _id: 'demo-contract-2',
+          title: 'Marketing Campaign Design Contract',
+          project: { title: 'Marketing Campaign Design', _id: 'demo-project-2' },
+          client: { firstName: 'Sarah', lastName: 'Johnson', company: 'TechCorp' },
+          freelancer: { firstName: 'Emily', lastName: 'Davis' },
+          status: 'completed',
+          type: 'Graphic Design Contract',
+          value: 1200,
+          startDate: '2024-01-05T10:00:00Z',
+          endDate: '2024-01-19T10:00:00Z',
+          signedDate: '2024-01-04T10:00:00Z',
+          completedDate: '2024-01-18T10:00:00Z',
+          milestones: [
+            { title: 'Concept Development', amount: 400, status: 'completed', dueDate: '2024-01-10T10:00:00Z' },
+            { title: 'Design Creation', amount: 600, status: 'completed', dueDate: '2024-01-16T10:00:00Z' },
+            { title: 'Final Delivery', amount: 200, status: 'completed', dueDate: '2024-01-19T10:00:00Z' }
+          ],
+          terms: {
+            paymentSchedule: 'Milestone-based',
+            revisions: '3 rounds included',
+            deliverables: 'Complete marketing campaign assets',
+            timeline: '2 weeks',
+            cancellationPolicy: '3 days notice required'
+          }
+        },
+        {
+          _id: 'demo-contract-3',
+          title: 'Content Writing Services Agreement',
+          project: { title: 'Blog Content Creation', _id: 'demo-project-3' },
+          client: { firstName: 'Sarah', lastName: 'Johnson', company: 'TechCorp' },
+          freelancer: { firstName: 'David', lastName: 'Miller' },
+          status: 'draft',
+          type: 'Content Writing Contract',
+          value: 800,
+          startDate: '2024-02-01T10:00:00Z',
+          endDate: '2024-02-29T10:00:00Z',
+          milestones: [
+            { title: 'Content Strategy & Planning', amount: 200, status: 'pending', dueDate: '2024-02-05T10:00:00Z' },
+            { title: 'Blog Posts Creation (Week 1-2)', amount: 300, status: 'pending', dueDate: '2024-02-15T10:00:00Z' },
+            { title: 'Blog Posts Creation (Week 3-4)', amount: 300, status: 'pending', dueDate: '2024-02-29T10:00:00Z' }
+          ],
+          terms: {
+            paymentSchedule: 'Milestone-based',
+            revisions: '2 rounds included',
+            deliverables: '8 blog posts (1000 words each)',
+            timeline: '1 month',
+            cancellationPolicy: '5 days notice required'
+          }
+        }
       ]
     }
   };
@@ -202,6 +367,7 @@ const Dashboard = () => {
           setProjects(roleData.projects);
           setPayments(roleData.payments);
           setMessages(roleData.messages);
+          setContracts(roleData.contracts);
         } else {
           // Fetch real data from backend
           const projectsResponse = await axios.get('/projects/my-projects');
@@ -212,6 +378,10 @@ const Dashboard = () => {
 
           const messagesResponse = await axios.get('/messages/recent');
           setMessages(messagesResponse.data);
+
+          // In a real app, you'd have a contracts endpoint
+          const roleData = demoData[user?.role || 'freelancer'];
+          setContracts(roleData.contracts);
         }
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
@@ -221,6 +391,7 @@ const Dashboard = () => {
           setProjects(roleData.projects);
           setPayments(roleData.payments);
           setMessages(roleData.messages);
+          setContracts(roleData.contracts);
         }
       } finally {
         setLoading(false);
@@ -252,6 +423,12 @@ const Dashboard = () => {
   const filteredPayments = payments.filter(payment => {
     if (paymentFilter === 'all') return true;
     return payment.status?.toLowerCase() === paymentFilter.toLowerCase();
+  });
+
+  // Filter contracts based on selected filter
+  const filteredContracts = contracts.filter(contract => {
+    if (contractFilter === 'all') return true;
+    return contract.status?.toLowerCase() === contractFilter.toLowerCase();
   });
 
   const endorsements = [
@@ -302,12 +479,25 @@ const Dashboard = () => {
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
       case 'completed': case 'released': return 'bg-green-100 text-green-800';
-      case 'in_progress': case 'in_escrow': return 'bg-blue-100 text-blue-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'in_progress': case 'in_escrow': case 'active': return 'bg-blue-100 text-blue-800';
+      case 'pending': case 'pending_signature': return 'bg-yellow-100 text-yellow-800';
       case 'in review': case 'disputed': return 'bg-purple-100 text-purple-800';
       case 'open': return 'bg-green-100 text-green-800';
       case 'cancelled': case 'refunded': return 'bg-red-100 text-red-800';
+      case 'draft': return 'bg-gray-100 text-gray-800';
       default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getContractStatusIcon = (status) => {
+    switch (status?.toLowerCase()) {
+      case 'active': return <FileCheck className="h-5 w-5 text-blue-600" />;
+      case 'completed': return <CheckCircle className="h-5 w-5 text-green-600" />;
+      case 'pending_signature': return <Signature className="h-5 w-5 text-yellow-600" />;
+      case 'draft': return <FileClock className="h-5 w-5 text-gray-600" />;
+      case 'cancelled': return <FileX className="h-5 w-5 text-red-600" />;
+      case 'disputed': return <AlertTriangle className="h-5 w-5 text-orange-600" />;
+      default: return <FileText className="h-5 w-5 text-gray-600" />;
     }
   };
 
@@ -322,6 +512,10 @@ const Dashboard = () => {
 
   const handlePaymentFilterChange = (e) => {
     setPaymentFilter(e.target.value);
+  };
+
+  const handleContractFilterChange = (e) => {
+    setContractFilter(e.target.value);
   };
 
   if (loading) {
@@ -608,6 +802,193 @@ const Dashboard = () => {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Contracts Tab */}
+        {activeTab === 'contracts' && (
+          <div className="bg-white rounded-lg shadow-sm border">
+            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900">Contract Management</h2>
+              <div className="flex items-center space-x-3">
+                <select 
+                  value={contractFilter}
+                  onChange={handleContractFilterChange}
+                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="all">All Contracts</option>
+                  <option value="active">Active</option>
+                  <option value="completed">Completed</option>
+                  <option value="pending_signature">Pending Signature</option>
+                  <option value="draft">Draft</option>
+                </select>
+                <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+                  <Plus className="h-4 w-4" />
+                  <span>New Contract</span>
+                </button>
+              </div>
+            </div>
+            <div className="p-6">
+              <div className="space-y-6">
+                {filteredContracts.length === 0 ? (
+                  <div className="text-center py-8">
+                    <FileText className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-500">No contracts found for the selected filter.</p>
+                  </div>
+                ) : (
+                  filteredContracts.map((contract) => (
+                    <div key={contract._id} className="border rounded-lg p-6 hover:bg-gray-50 transition-colors">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-start space-x-4">
+                          <div className="flex-shrink-0">
+                            {getContractStatusIcon(contract.status)}
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-medium text-gray-900 mb-1">{contract.title}</h3>
+                            <p className="text-gray-600 mb-2">
+                              {user?.role === 'freelancer' 
+                                ? `Client: ${contract.client?.firstName} ${contract.client?.lastName} (${contract.client?.company})` 
+                                : `Freelancer: ${contract.freelancer?.firstName} ${contract.freelancer?.lastName}`
+                              }
+                            </p>
+                            <div className="flex items-center space-x-4 text-sm text-gray-500">
+                              <span>Contract Type: {contract.type}</span>
+                              <span>•</span>
+                              <span>Value: ${contract.value.toLocaleString()}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(contract.status)}`}>
+                            {contract.status?.replace('_', ' ')}
+                          </span>
+                          <button className="p-2 text-gray-400 hover:text-gray-600">
+                            <ExternalLink className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Contract Timeline */}
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 text-sm">
+                        <div>
+                          <p className="text-gray-500">Start Date</p>
+                          <p className="font-medium">{new Date(contract.startDate).toLocaleDateString()}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">End Date</p>
+                          <p className="font-medium">{new Date(contract.endDate).toLocaleDateString()}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">Signed Date</p>
+                          <p className="font-medium">
+                            {contract.signedDate ? new Date(contract.signedDate).toLocaleDateString() : 'Not signed'}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">Duration</p>
+                          <p className="font-medium">{contract.terms?.timeline}</p>
+                        </div>
+                      </div>
+
+                      {/* Milestones Progress */}
+                      <div className="mb-6">
+                        <div className="flex items-center justify-between mb-3">
+                          <h4 className="text-sm font-medium text-gray-900">Milestones Progress</h4>
+                          <span className="text-sm text-gray-500">
+                            {contract.milestones?.filter(m => m.status === 'completed').length || 0} of {contract.milestones?.length || 0} completed
+                          </span>
+                        </div>
+                        <div className="space-y-2">
+                          {contract.milestones?.map((milestone, index) => (
+                            <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                              <div className="flex items-center space-x-3">
+                                <div className={`w-3 h-3 rounded-full ${
+                                  milestone.status === 'completed' ? 'bg-green-500' :
+                                  milestone.status === 'in_progress' ? 'bg-blue-500' :
+                                  'bg-gray-300'
+                                }`}></div>
+                                <div>
+                                  <p className="text-sm font-medium text-gray-900">{milestone.title}</p>
+                                  <p className="text-xs text-gray-500">Due: {new Date(milestone.dueDate).toLocaleDateString()}</p>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-sm font-medium text-gray-900">${milestone.amount}</p>
+                                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(milestone.status)}`}>
+                                  {milestone.status?.replace('_', ' ')}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Contract Terms Summary */}
+                      <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                        <h4 className="text-sm font-medium text-gray-900 mb-3">Contract Terms</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <p className="text-gray-500">Payment Schedule</p>
+                            <p className="font-medium">{contract.terms?.paymentSchedule}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-500">Revisions Included</p>
+                            <p className="font-medium">{contract.terms?.revisions}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-500">Deliverables</p>
+                            <p className="font-medium">{contract.terms?.deliverables}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-500">Cancellation Policy</p>
+                            <p className="font-medium">{contract.terms?.cancellationPolicy}</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4 text-sm text-gray-500">
+                          {contract.status === 'active' && (
+                            <div className="flex items-center space-x-1">
+                              <Shield className="h-4 w-4 text-green-500" />
+                              <span>Escrow Protected</span>
+                            </div>
+                          )}
+                          {contract.status === 'pending_signature' && (
+                            <div className="flex items-center space-x-1">
+                              <Signature className="h-4 w-4 text-yellow-500" />
+                              <span>Awaiting Signature</span>
+                            </div>
+                          )}
+                          {contract.completedDate && (
+                            <span>Completed: {new Date(contract.completedDate).toLocaleDateString()}</span>
+                          )}
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <button className="px-3 py-1 bg-blue-100 text-blue-700 rounded-md text-sm font-medium hover:bg-blue-200 transition-colors">
+                            View Contract
+                          </button>
+                          {contract.status === 'pending_signature' && (
+                            <button className="px-3 py-1 bg-green-100 text-green-700 rounded-md text-sm font-medium hover:bg-green-200 transition-colors">
+                              Sign Contract
+                            </button>
+                          )}
+                          {contract.status === 'active' && (
+                            <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-200 transition-colors">
+                              Manage Milestones
+                            </button>
+                          )}
+                          <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-200 transition-colors">
+                            Download PDF
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>
